@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 命名空间指向dao接口 -->
+<mapper namespace="com.aaa.dao.UserInfoDao">
+	<!-- 定义公用sql代码段 -->
+	<sql id="mySqlStatment">
+    	id,username,password,createtime,imageurls
+    </sql>
+	<!-- <insert id="addUser" parameterType="userinfo">
+		insert into tbl_userinfo values (seq_userinfo.nextval,#{username},#{password},#{createtime})
+	</insert> -->
+	 <insert id="addUser" parameterType="userinfo">
+		insert into tbl_userinfo (username,password,createtime,imageurls) values (#{username},#{password},#{createtime},#{imageUrls})
+
+	</insert>
+	<insert id="addUserRetInt" parameterType="userinfo">
+		insert into tbl_userinfo values (seq_userinfo.nextval,#{username},#{password},#{createtime})
+	</insert>
+	<!-- oracle或者db2返回主键 -->
+	<insert id="addUserGetKey" parameterType="userinfo">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select seq_userinfo.nextval from dual
+		</selectKey>
+		insert into tbl_userinfo values (#{id},#{username},#{password},#{createtime})
+	</insert>
+	<!-- mysql或者sqlserver返回主键 -->
+	<!--<insert id="addUser" useGeneratedKeys="true" keyProperty="id" parameterType="userinfo">
+		insert into tbl_userinfo values (#{id},#{username},#{password},#{createtime})
+	</insert>-->
+	<select id="findUserById" parameterType="int" resultType="userinfo">
+		select <include refid="mySqlStatment"></include> from tbl_userinfo where id=#{fdsaf}
+	</select>
+	<!-- 使用resultType的时候，要求返回值的列名必须跟实体类中的属性名保持一致 -->
+	<select id="findAllUser"  resultType="userinfo">
+		select <include refid="mySqlStatment"></include> from tbl_userinfo
+	</select>
+	<!-- 	<select id="findAllUser"  resultMap="myresultMap">
+            select <include refid="mySqlStatment"></include> from tbl_userinfo
+        </select> -->
+	<select id="findAllUserRetMap"  resultType="map">
+		select <include refid="mySqlStatment"></include> from tbl_userinfo
+	</select>
+	<!-- 创建resultmap,type指的是java实体类型 -->
+	<resultMap type="userinfo" id="myresultMap">
+		<!-- id标签代表实体类中对应数据库主键的属性 -->
+		<!-- <id property="id" column="id"/> -->
+		<result property="id" column="id"/>
+		<!--result标签主键以外的属性 ，property代表java实体中的属性名，column代表数据库中的列名 -->
+		<result property="username"  column="user_name"/>
+		<result property="password" column="password"/>
+		<result property="createtime" column="createtime"/>
+	</resultMap>
+	<select id="findAllUserCondition" parameterType="com.aaa.entity.MyCondition" resultType="userinfo" >
+
+		select <include refid="mySqlStatment"></include> from tbl_userinfo where createtime between #{startTime} and #{endTime}
+
+	</select>
+	<delete id="delUserById" parameterType="int">
+		  delete  from tbl_userinfo where id=#{fdsa}
+	</delete>
+	<update id="editUser" parameterType="userinfo">
+			update tbl_userinfo set username=#{username},password=#{password},createtime=#{createtime} where id=#{id}
+	</update>
+	
+	<select id="findAllUserByPage" parameterType="map" resultType="userinfo">
+
+		select <include refid="mySqlStatment"></include> from tbl_userinfo
+			<where>
+				<if test="username!=null and username!=''">
+					username like concat(concat('%',#{username}),'%')
+				</if>
+			</where>
+		    <if test="prop!=null and prop!=''">
+				order  by ${prop}
+				<if test="order=='descending'">
+					desc
+				</if>
+				<if test="order=='ascending'">
+					asc
+				</if>
+			</if>
+
+
+		limit #{start},#{end}
+
+	</select>
+	<select id="getTotal" resultType="Integer">
+			select count(*) totalrow from tbl_userinfo
+
+	</select>
+</mapper>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>显示所有用户</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!--ajax方式请求后台-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+        <div id="app">
+            <table border="1px">
+                <tr>
+                    <td>4用户编号</td>
+                    <td>用户名</td>
+                    <td>用户密码</td>
+                    <td>创建时间</td>
+                </tr>
+                <tr v-for="user in userList">
+                        <td>{{user.id}}</td>
+                        <td>{{user.username}}</td>
+                        <td>{{user.password}}</td>
+                        <td>{{user.createtime}}</td>
+                </tr>
+            </table>
+        </div>
+<script>
+        var vm = new Vue({
+            el:"#app",
+            data:{
+                userList:[]
+            },
+            created:function () {
+                //this在then内部失效
+                var temp=this;
+                //请求后端数据，赋值给userList
+                axios.post('/userinfo/findAllUserJson')
+                    .then(function (response) {
+                        temp.userList= response.data;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+
+        })
+
+</script>
+</body>
+</html>

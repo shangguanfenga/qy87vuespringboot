@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>显示所有用户</title>
+</head>
+<body>
+        <div id="app">
+            <table border="1px">
+                <tr>
+                    <td>用户编号</td>
+                    <td>用户名</td>
+                    <td>用户密码</td>
+                    <td>创建时间</td>
+                </tr>
+                <tr th:each="user : ${myUserList}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.username}"></td>
+                        <td th:text="${user.password}"></td>
+                        <td th:text="${#dates.format(user.createtime, 'yyyy-MM-dd HH:mm:SS')}"></td>
+                </tr>
+            </table>
+        </div>
+
+</body>
+</html>

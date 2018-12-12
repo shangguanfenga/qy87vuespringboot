@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>显示所有用户</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!--ajax方式请求后台-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <style>
+        .demo-table-expand {
+            font-size: 0;
+        }
+        .demo-table-expand label {
+            width: 90px;
+            color: #99a9bf;
+        }
+        .demo-table-expand .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+        <div id="app">
+            <template>
+                <el-table
+                        :data="userList"
+                        style="width: 100%"
+                        :default-sort = "{prop: 'id', order: 'descending'}"
+                >
+                    <el-table-column type="expand">
+                        <template slot-scope="props">
+                            <el-form label-position="left" inline class="demo-table-expand">
+                                <el-form-item label="用户ID">
+                                    <span>{{ props.row.id }}</span>
+                                </el-form-item>
+                                <el-form-item label="用户姓名">
+                                    <span>{{ props.row.username }}</span>
+                                </el-form-item>
+                                <el-form-item label="密码">
+                                    <span>{{ props.row.password }}</span>
+                                </el-form-item>
+                                <el-form-item label="创建时间">
+                                    <span>{{ props.row.createtime }}</span>
+                                </el-form-item>
+                            </el-form>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="商品 ID"
+                            prop="id"
+                    >
+                    </el-table-column>
+                    <el-table-column
+                            label="用户名称"
+                            prop="username">
+                    </el-table-column>
+                </el-table>
+            </template>
+        </div>
+<script>
+        var vm = new Vue({
+            el:"#app",
+            data:{
+                userList:[]
+            },
+            created:function () {
+                //this在then内部失效
+                var temp=this;
+                //请求后端数据，赋值给userList
+                axios.post('/userinfo/findAllUserJson')
+                    .then(function (response) {
+                        temp.userList= response.data;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+
+        })
+
+</script>
+</body>
+</html>
